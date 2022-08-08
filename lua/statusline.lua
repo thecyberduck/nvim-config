@@ -21,20 +21,24 @@ local colors = {
 }
 
 local hl = vim.api.nvim_set_hl
-hl(0, 'StatusLineNormal',       { fg = colors.fujiWhite,   bg = colors.sumiInk2 })
-hl(0, 'StatusLineBright',       { fg = colors.fujiWhite,   bg = colors.sumiInk4 })
-hl(0, 'StatusLineDim',          { fg = colors.fujiWhite,   bg = colors.sumiInk0 })
-hl(0, 'StatusLineDiffText',     { fg = colors.roninYellow, bg = colors.sumiInk2 })
-hl(0, 'StatusLineDiffAdd',      { fg = colors.autumnGreen, bg = colors.sumiInk2 })
-hl(0, 'StatusLineDiffChange',   { fg = colors.carpYellow,  bg = colors.sumiInk2 })
-hl(0, 'StatusLineDiffDelete',   { fg = colors.peachRed,    bg = colors.sumiInk2 })
-hl(0, 'StatusLineMode',         { fg = colors.fujiWhite,   bg = colors.sumiInk4 })
-hl(0, 'StatusLineModeNormal',   { fg = colors.fujiWhite,   bg = colors.sumiInk4 })
-hl(0, 'StatusLineModeInsert',   { fg = colors.sumiInk0,    bg = colors.carpYellow })
-hl(0, 'StatusLineModeVisual',   { fg = colors.sumiInk0,    bg = colors.springBlue })
-hl(0, 'StatusLineModeReplace',  { fg = colors.sumiInk0,    bg = colors.peachRed })
-hl(0, 'StatusLineModeCommand',  { fg = colors.sumiInk0,    bg = colors.oniViolet })
-hl(0, 'StatusLineModeTerminal', { fg = colors.sumiInk0,    bg = colors.fujiGray })
+hl(0, 'StatusLineNormal',               { fg = colors.fujiWhite,   bg = colors.sumiInk2 })
+hl(0, 'StatusLineBright',               { fg = colors.fujiWhite,   bg = colors.sumiInk4 })
+hl(0, 'StatusLineDim',                  { fg = colors.fujiWhite,   bg = colors.sumiInk0 })
+hl(0, 'StatusLineDiffText',             { fg = colors.roninYellow, bg = colors.sumiInk2 })
+hl(0, 'StatusLineDiffAdd',              { fg = colors.autumnGreen, bg = colors.sumiInk2 })
+hl(0, 'StatusLineDiffChange',           { fg = colors.carpYellow,  bg = colors.sumiInk2 })
+hl(0, 'StatusLineDiffDelete',           { fg = colors.peachRed,    bg = colors.sumiInk2 })
+hl(0, 'StatusLineMode',                 { fg = colors.fujiWhite,   bg = colors.sumiInk4 })
+hl(0, 'StatusLineModeNormal',           { fg = colors.fujiWhite,   bg = colors.sumiInk4 })
+hl(0, 'StatusLineModeInsert',           { fg = colors.sumiInk0,    bg = colors.carpYellow })
+hl(0, 'StatusLineModeVisual',           { fg = colors.sumiInk0,    bg = colors.springBlue })
+hl(0, 'StatusLineModeReplace',          { fg = colors.sumiInk0,    bg = colors.peachRed })
+hl(0, 'StatusLineModeCommand',          { fg = colors.sumiInk0,    bg = colors.oniViolet })
+hl(0, 'StatusLineModeTerminal',         { fg = colors.sumiInk0,    bg = colors.fujiGray })
+hl(0, 'LspDiagnosticsSignHint',         { fg = colors.autumnGreen, bg = colors.sumiInk2 })
+hl(0, 'LspDiagnosticsSignError',        { fg = colors.peachRed,    bg = colors.sumiInk2 })
+hl(0, 'LspDiagnosticsSignWarning',      { fg = colors.carpYellow,  bg = colors.sumiInk2 })
+hl(0, 'LspDiagnosticsSignInformation',  { fg = colors.springBlue,  bg = colors.sumiInk2 })
 
 local modes = {
   ["n"]     = { "NORMAL", 'Normal' },
@@ -78,42 +82,42 @@ local function filename()
   if fname == "" then
       return ""
   end
-  return fname .. "%m%h%w "
+  return table.concat {fname, "%m%h%w "}
 end
 
--- local function lsp()
---   local count = {}
---   local levels = {
---     errors = "Error",
---     warnings = "Warn",
---     info = "Info",
---     hints = "Hint",
---   }
---
---   for k, level in pairs(levels) do
---     count[k] = vim.tbl_count(vim.diagnostic.get(0, { severity = level }))
---   end
---
---   local errors = ""
---   local warnings = ""
---   local hints = ""
---   local info = ""
---
---   if count["errors"] ~= 0 then
---     errors = " %#LspDiagnosticsSignError# " .. count["errors"]
---   end
---   if count["warnings"] ~= 0 then
---     warnings = " %#LspDiagnosticsSignWarning# " .. count["warnings"]
---   end
---   if count["hints"] ~= 0 then
---     hints = " %#LspDiagnosticsSignHint# " .. count["hints"]
---   end
---   if count["info"] ~= 0 then
---     info = " %#LspDiagnosticsSignInformation# " .. count["info"]
---   end
---
---   return errors .. warnings .. hints .. info .. "%#Normal#"
--- end
+local function lsp()
+  local count = {}
+  local levels = {
+    errors = "Error",
+    warnings = "Warn",
+    info = "Info",
+    hints = "Hint",
+  }
+
+  for k, level in pairs(levels) do
+    count[k] = vim.tbl_count(vim.diagnostic.get(0, { severity = level }))
+  end
+
+  local errors = ""
+  local warnings = ""
+  local hints = ""
+  local info = ""
+
+  if count["errors"] ~= 0 then
+    errors = " %#LspDiagnosticsSignError# " .. count["errors"]
+  end
+  if count["warnings"] ~= 0 then
+    warnings = " %#LspDiagnosticsSignWarning# " .. count["warnings"]
+  end
+  if count["hints"] ~= 0 then
+    hints = " %#LspDiagnosticsSignHint# " .. count["hints"]
+  end
+  if count["info"] ~= 0 then
+    info = " %#LspDiagnosticsSignInformation# " .. count["info"]
+  end
+
+  return errors .. warnings .. hints .. info .. " %#Normal#"
+end
 
 local function filetype()
   return string.format(" %s ", vim.bo.filetype):upper()
@@ -169,7 +173,7 @@ Statusline.active = function()
     "%#StatusLineNormal#",
     "%=",
     --"%#StatusLineLsp#",
-    --lsp(),
+    lsp(),
     "%#StatusLineBright#",
     filetype(),
     lineinfo(),
@@ -177,7 +181,7 @@ Statusline.active = function()
   }
 end
 
-function Statusline.inactive()
+Statusline.inactive = function()
   return "%#StatusLineDim# %F"
 end
 

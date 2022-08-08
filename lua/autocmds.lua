@@ -16,12 +16,6 @@ autocmd('BufWritePre', {
   command = ":%s/\\s\\+$//e"
 })
 
--- Don't auto comment new lines
-autocmd('BufEnter', {
-  pattern = '*',
-  command = 'set  fo-=cro'
-})
-
 -- Settings for filetypes:
 -- Help window
 autocmd('FileType', {

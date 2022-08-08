@@ -1,5 +1,3 @@
-require('core/functions')
-
 -- map key function
 local function map(mode, lhs, rhs, opts)
   local options = opts or {}
