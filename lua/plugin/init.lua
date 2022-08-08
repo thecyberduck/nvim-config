@@ -20,6 +20,7 @@ function initPacker()
   use 'preservim/tagbar'
   use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
   use 'lewis6991/gitsigns.nvim'
+  use { 'norcalli/nvim-colorizer.lua', config = function() require'colorizer'.setup() end }
   use { 'numToStr/Comment.nvim', config = function() require('Comment').setup() end }
   use 'tommcdo/vim-lion'
   use 'rebelot/kanagawa.nvim'
@@ -31,6 +32,7 @@ function initPacker()
   vim.api.nvim_del_user_command('PackerInit')
 end
 
+-- Load packer on-demand using PackerInit command; :PackerInit
 if fn.empty(fn.glob(compile_path)) > 0 then
   initPacker()
   require('packer').compile()

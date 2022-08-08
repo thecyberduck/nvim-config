@@ -1,48 +1,67 @@
+-- colors from kanagawa.nvim
+local colors = {
+  sumiInk0      = "#16161D",
+  sumiInk1      = "#1F1F28",
+  sumiInk2      = "#2A2A37",
+  sumiInk3      = "#363646",
+  sumiInk4      = "#54546D",
+  fujiWhite     = "#DCD7BA",
+  fujiGray      = "#727169",
+  autumnGreen   = "#76946A",
+  roninYellow   = "#FF9E3B",
+  oniViolet     = "#957FB8",
+  crystalBlue   = "#7E9CD8",
+  springBlue    = "#7FB4CA",
+  springGreen   = "#98BB6C",
+  boatYellow1   = "#938056",
+  carpYellow    = "#E6C384",
+  sakuraPink    = "#D27E99",
+  peachRed      = "#FF5D62",
+  surimiOrange  = "#FFA066",
+}
+
+local hl = vim.api.nvim_set_hl
+hl(0, 'StatusLineNormal',       { fg = colors.fujiWhite,   bg = colors.sumiInk2 })
+hl(0, 'StatusLineBright',       { fg = colors.fujiWhite,   bg = colors.sumiInk4 })
+hl(0, 'StatusLineDim',          { fg = colors.fujiWhite,   bg = colors.sumiInk0 })
+hl(0, 'StatusLineDiffText',     { fg = colors.roninYellow, bg = colors.sumiInk2 })
+hl(0, 'StatusLineDiffAdd',      { fg = colors.autumnGreen, bg = colors.sumiInk2 })
+hl(0, 'StatusLineDiffChange',   { fg = colors.carpYellow,  bg = colors.sumiInk2 })
+hl(0, 'StatusLineDiffDelete',   { fg = colors.peachRed,    bg = colors.sumiInk2 })
+hl(0, 'StatusLineMode',         { fg = colors.fujiWhite,   bg = colors.sumiInk4 })
+hl(0, 'StatusLineModeNormal',   { fg = colors.fujiWhite,   bg = colors.sumiInk4 })
+hl(0, 'StatusLineModeInsert',   { fg = colors.sumiInk0,    bg = colors.carpYellow })
+hl(0, 'StatusLineModeVisual',   { fg = colors.sumiInk0,    bg = colors.springBlue })
+hl(0, 'StatusLineModeReplace',  { fg = colors.sumiInk0,    bg = colors.peachRed })
+hl(0, 'StatusLineModeCommand',  { fg = colors.sumiInk0,    bg = colors.oniViolet })
+hl(0, 'StatusLineModeTerminal', { fg = colors.sumiInk0,    bg = colors.fujiGray })
+
 local modes = {
-  ["n"] = "NORMAL",
-  ["no"] = "NORMAL",
-  ["v"] = "VISUAL",
-  ["V"] = "VISUAL LINE",
-  [""] = "VISUAL BLOCK",
-  ["s"] = "SELECT",
-  ["S"] = "SELECT LINE",
-  [""] = "SELECT BLOCK",
-  ["i"] = "INSERT",
-  ["ic"] = "INSERT",
-  ["R"] = "REPLACE",
-  ["Rv"] = "VISUAL REPLACE",
-  ["c"] = "COMMAND",
-  ["cv"] = "VIM EX",
-  ["ce"] = "EX",
-  ["r"] = "PROMPT",
-  ["rm"] = "MOAR",
-  ["r?"] = "CONFIRM",
-  ["!"] = "SHELL",
-  ["t"] = "TERMINAL",
+  ["n"]     = { "NORMAL", 'Normal' },
+  ["no"]    = { "NORMAL", 'Normal' },
+  ["v"]     = { "VISUAL", 'Visual' },
+  ["V"]     = { "VISUAL LINE", 'Visual' },
+  [""]    = { "VISUAL BLOCK", 'Visual' },
+  ["s"]     = { "SELECT", 'Select' },
+  ["S"]     = { "SELECT LINE", 'Select' },
+  [""]    = { "SELECT BLOCK", 'Select' },
+  ["i"]     = { "INSERT", 'Insert' },
+  ["ic"]    = { "INSERT", 'Insert' },
+  ["R"]     = { "REPLACE", 'Replace' },
+  ["Rv"]    = { "VISUAL REPLACE", 'Replace' },
+  ["c"]     = { "COMMAND", 'Command' },
+  ["cv"]    = { "VIM EX", },
+  ["ce"]    = { "EX", },
+  ["r"]     = { "PROMPT", },
+  ["rm"]    = { "MOAR", },
+  ["r?"]    = { "CONFIRM", },
+  ["!"]     = { "SHELL", },
+  ["t"]     = { "TERMINAL", 'Terminal' },
 }
 
 local function mode()
-  local current_mode = vim.api.nvim_get_mode().mode
-  return string.format(" %s ", modes[current_mode]):upper()
-end
-
-local function update_mode_colors()
-  local current_mode = vim.api.nvim_get_mode().mode
-  local mode_color = "%#StatusLineAccent#"
-  if current_mode == "n" then
-      mode_color = "%#StatuslineAccent#"
-  elseif current_mode == "i" or current_mode == "ic" then
-      mode_color = "%#StatuslineInsertAccent#"
-  elseif current_mode == "v" or current_mode == "V" or current_mode == "" then
-      mode_color = "%#StatuslineVisualAccent#"
-  elseif current_mode == "R" then
-      mode_color = "%#StatuslineReplaceAccent#"
-  elseif current_mode == "c" then
-      mode_color = "%#StatuslineCmdLineAccent#"
-  elseif current_mode == "t" then
-      mode_color = "%#StatuslineTerminalAccent#"
-  end
-  return mode_color
+  local current_mode = modes[vim.api.nvim_get_mode().mode]
+  return table.concat {"%#StatusLineMode",current_mode[2] or "","# ",current_mode[1]," "}
 end
 
 local function filepath()
@@ -59,7 +78,7 @@ local function filename()
   if fname == "" then
       return ""
   end
-  return fname .. " "
+  return fname .. "%m%h%w "
 end
 
 -- local function lsp()
@@ -112,9 +131,9 @@ local function gitstatus()
   if not git_info or git_info.head == "" then
     return ""
   end
-  local added = git_info.added and ("%#GitSignsAdd#+%d" .. git_info.added .. " ") or ""
-  local changed = git_info.changed and ("%#GitSignsChange#~" .. git_info.changed .. " ") or ""
-  local removed = git_info.removed and ("%#GitSignsDelete#-" .. git_info.removed .. " ") or ""
+  local added = git_info.added and ("%#StatusLineDiffAdd#+%d" .. git_info.added .. " ") or ""
+  local changed = git_info.changed and ("%#StatusLineDiffChange#~" .. git_info.changed .. " ") or ""
+  local removed = git_info.removed and ("%#StatusLineDiffDelete#-" .. git_info.removed .. " ") or ""
   if git_info.added == 0 then
     added = ""
   end
@@ -126,12 +145,14 @@ local function gitstatus()
   end
   return table.concat {
      " ",
+     "%#StatusLineDiffText#",
+     " ",
+     git_info.head,
+     " ",
      added,
      changed,
      removed,
      " ",
-     "%#GitSignsAdd# ",
-     git_info.head,
      " %#Normal#",
   }
 end
@@ -140,23 +161,24 @@ Statusline = {}
 
 Statusline.active = function()
   return table.concat {
-    "%#Statusline#",
-    update_mode_colors(),
     mode(),
-    "%#Normal# ",
+    "%#StatusLineNormal# ",
     filepath(),
     filename(),
     gitstatus(),
-    "%#Normal#",
+    "%#StatusLineNormal#",
+    "%=",
+    --"%#StatusLineLsp#",
     --lsp(),
-    "%=%#StatusLineExtra#",
+    "%#StatusLineBright#",
     filetype(),
     lineinfo(),
+    "%#Normal#",
   }
 end
 
 function Statusline.inactive()
-  return " %F"
+  return "%#StatusLineDim# %F"
 end
 
 vim.api.nvim_exec([[
@@ -164,6 +186,5 @@ vim.api.nvim_exec([[
   au!
   au WinEnter,BufEnter * setlocal statusline=%!v:lua.Statusline.active()
   au WinLeave,BufLeave * setlocal statusline=%!v:lua.Statusline.inactive()
-  au WinEnter,BufEnter,FileType NvimTree setlocal statusline=%!v:lua.Statusline.short()
   augroup END
 ]], false)
