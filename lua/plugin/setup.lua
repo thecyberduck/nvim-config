@@ -135,7 +135,7 @@ cmp.setup({
 
     ['<C-h>'] = cmp.mapping.abort(),
     ['<Left>'] = cmp.mapping.abort(),
-    ['<Esc>'] = cmp.mapping.abort(),
+    -- ['<Esc>'] = cmp.mapping.abort(),
 
     ['<C-l>'] = cmp.mapping.confirm({select = true}),
     ['<CR>'] = cmp.mapping.confirm({select = true}),

@@ -23,26 +23,20 @@ map('n', '[W',          '<Cmd>silent! lolder<CR>zz')
 map('n', ']W',          '<Cmd>silent! lnewer<CR>zz')
 -- >>>
 -- Buffers and Tabs <<<
-map('n', '<leader>a',   '<Cmd>enew<CR>')
-map('n', '<leader>s',   '<Cmd>w!<CR>')
-map('n', '<leader>d',   '<Cmd>bd!<CR>')
-map('n', '<leader>b',   '<Cmd>b#<CR>')
-map('n', '<leader>B',   '<Cmd>b <C-Z>')
+map('n', '<leader>b',   '<Cmd>lua BuffersMenu()<CR>')
 map('n', '[b',          '<Cmd>bprev<CR>')
 map('n', ']b',          '<Cmd>bnext<CR>')
-map('n', '<leader>A',   '<Cmd>tabnew<CR>')
-map('n', '<leader>D',   '<Cmd>tabclose<CR>')
-map('n', '[c',          '<Cmd>tabprev<CR>')
-map('n', ']c',          '<Cmd>tabnext<CR>')
-map('n', '<leader>c',   '<Cmd>tablast<CR>')
+map('n', '<leader>B',   '<Cmd>lua TabsMenu()<CR>')
+map('n', '[B',          '<Cmd>tabprev<CR>')
+map('n', ']B',          '<Cmd>tabnext<CR>')
 -- >>>
 -- Vimrc <<<
 map('n', '<leader>e',   '<Cmd>edit $MYVIMRC<CR>')
 map('n', '<leader>E',   '<Cmd>source $MYVIMRC<CR>')
 -- >>>
 -- move lines by tab width in visual mode <<<
-map('n', '>', '>gv')
-map('n', '<', '<gv')
+map('v', '>', '>gv')
+map('v', '<', '<gv')
 -- >>>
 -- Moving cursor <<<
 map('i', '<C-k>', '<UP>')

@@ -19,6 +19,7 @@ function initPacker(compile)
   use 'wbthomason/packer.nvim'
   use 'lewis6991/impatient.nvim'
   use 'gentoo/gentoo-syntax'
+  use 'vifm/vifm.vim'
   use 'lukas-reineke/indent-blankline.nvim'
   use 'preservim/tagbar'
   use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
