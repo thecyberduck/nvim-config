@@ -74,7 +74,7 @@ opt.wildignore:append ".git,.hg,.svn,*.pyc,*.o,*.out,*.jpg,*.jpeg,*.png,*.gif,*.
 -- >>>
 -- Autocompletion <<<
 opt.complete = ".,w,b,k"
-opt.completeopt = "menuone,noselect"
+opt.completeopt = "menu,menuone,noselect"
 opt.shortmess:append "Aac"
 -- >>>
 -- Search and Highlight <<<

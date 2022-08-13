@@ -137,10 +137,21 @@ cmp.setup({
     ['<Left>'] = cmp.mapping.abort(),
     -- ['<Esc>'] = cmp.mapping.abort(),
 
-    ['<C-l>'] = cmp.mapping.confirm({select = true}),
-    ['<CR>'] = cmp.mapping.confirm({select = true}),
-    ['<Right>'] = cmp.mapping.confirm({select = true}),
-
+    ['<C-l>'] = cmp.mapping.confirm({behavior = cmp.ConfirmBehavior.Replace, select = true}),
+    ['<Right>'] = cmp.mapping.confirm({behavior = cmp.ConfirmBehavior.Replace, select = true}),
+    --['<CR>'] = cmp.mapping.confirm({select = true}),
+    ['<CR>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        local entry = cmp.get_selected_entry()
+        if entry then
+          cmp.confirm({behavior = cmp.ConfirmBehavior.Replace, select = true })
+        else
+          cmp.abort()
+        end
+      else
+        fallback()
+      end
+    end, {'i', 's'}),
     ['<C-]>'] = cmp.mapping(function(fallback)
       if luasnip.jumpable(1) then
         luasnip.jump(1)
