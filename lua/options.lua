@@ -83,7 +83,7 @@ opt.incsearch = true
 opt.smartcase = true
 -- >>>
 -- Others <<<
-opt.formatoptions = "jlqr"
+opt.formatoptions:remove('ro')
 opt.diffopt = "vertical,filler"
 if opt.diff:get() then
   opt.cursorbind = true

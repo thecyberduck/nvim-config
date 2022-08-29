@@ -2,7 +2,7 @@
 -- Treesitter <<<
 require('nvim-treesitter.configs').setup {
   -- A list of parser names, or "all"
-  ensure_installed = { "c", "lua", 'bash' },
+  ensure_installed = { "c", "lua", 'bash', "rust", "toml" },
   -- Install parsers synchronously (only applied to `ensure_installed`)
   sync_install = false,
   -- Automatically install missing parsers when entering buffer
@@ -15,22 +15,25 @@ require('nvim-treesitter.configs').setup {
     -- list of language that will be disabled
     --disable = { "c", "rust" },
   },
+  indent = {
+    enable = true,
+  },
 } -- >>>
 
 -- Gitsigns <<<
 require('gitsigns').setup {
   signs = {
-    add          = {hl = 'GitSignsAdd'   , text = '+', numhl='GitSignsAddNr'   , linehl='GitSignsAddLn'},
-    change       = {hl = 'GitSignsChange', text = '~', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
-    delete       = {hl = 'GitSignsDelete', text = '_', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
-    topdelete    = {hl = 'GitSignsDelete', text = '‾', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
-    changedelete = {hl = 'GitSignsChange', text = '±', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
+    add          = { hl = 'GitSignsAdd',    text = '+', numhl = 'GitSignsAddNr',    linehl = 'GitSignsAddLn' },
+    change       = { hl = 'GitSignsChange', text = '~', numhl = 'GitSignsChangeNr', linehl = 'GitSignsChangeLn' },
+    delete       = { hl = 'GitSignsDelete', text = '_', numhl = 'GitSignsDeleteNr', linehl = 'GitSignsDeleteLn' },
+    topdelete    = { hl = 'GitSignsDelete', text = '‾', numhl = 'GitSignsDeleteNr', linehl = 'GitSignsDeleteLn' },
+    changedelete = { hl = 'GitSignsChange', text = '±', numhl = 'GitSignsChangeNr', linehl = 'GitSignsChangeLn' },
   },
 } -- >>>
 
 -- Lsp <<<
 -- Mappings.
-local opts = { noremap=true, silent=true }
+local opts = { noremap = true, silent = true }
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
 vim.keymap.set('n', '<space>W', vim.diagnostic.setloclist, opts)
@@ -43,7 +46,7 @@ local on_attach = function(client, bufnr)
 
   -- Mappings.
   -- See `:help vim.lsp.*` for documentation on any of the below functions
-  local bufopts = { noremap=true, silent=true, buffer=bufnr }
+  local bufopts = { noremap = true, silent = true, buffer = bufnr }
   vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
   vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
   vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
@@ -78,9 +81,32 @@ lspconfig.util.default_config = vim.tbl_deep_extend(
 
 local lsp_configs = {
   ['clangd'] = {},
+  ['rust_analyzer'] = {},
+  ['sumneko_lua'] = {
+    settings = {
+      Lua = {
+        runtime = {
+          version = 'LuaJIT',
+        },
+        diagnostics = {
+          globals = { 'vim' },
+        },
+        workspace = {
+          library = {
+            [vim.fn.expand('$VIMRUNTIME/lua')] = true,
+            [vim.fn.stdpath('config') .. '/lua'] = true,
+          }
+        },
+        telemetry = {
+          enable = false,
+        },
+      },
+    },
+  },
 }
-for lsp,config in pairs(lsp_configs) do
-  require('lspconfig')[lsp].setup({})
+
+for lsp, config in pairs(lsp_configs) do
+  require('lspconfig')[lsp].setup(config)
 end
 -- >>>
 
@@ -89,8 +115,14 @@ require('luasnip.loaders.from_vscode').lazy_load()
 
 local cmp = require('cmp')
 local luasnip = require('luasnip')
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
 
-local select_opts = {behavior = cmp.SelectBehavior.Select}
+cmp.event:on(
+  'confirm_done',
+  cmp_autopairs.on_confirm_done()
+)
+
+local select_opts = { behavior = cmp.SelectBehavior.Select }
 
 cmp.setup({
   snippet = {
@@ -99,19 +131,19 @@ cmp.setup({
     end
   },
   sources = {
-    {name = 'nvim_lsp', keyword_length = 3},
-    {name = 'nvim_lsp_signature_help'},
-    {name = 'luasnip', keyword_length = 2},
-    {name = 'nvim_lua' },
-    {name = 'path'},
-    {name = 'buffer', keyword_length = 4},
-    {name = 'omni'},
+    { name = 'nvim_lsp', keyword_length = 3 },
+    { name = 'nvim_lsp_signature_help' },
+    { name = 'luasnip', keyword_length = 2 },
+    { name = 'nvim_lua' },
+    { name = 'path' },
+    { name = 'buffer', keyword_length = 4 },
+    { name = 'omni' },
   },
   window = {
     documentation = cmp.config.window.bordered()
   },
   formatting = {
-    fields = {'menu', 'abbr', 'kind'},
+    fields = { 'menu', 'abbr', 'kind' },
     format = function(entry, item)
       local menu_icon = {
         nvim_lsp = '[LSP]',
@@ -137,28 +169,28 @@ cmp.setup({
     ['<Left>'] = cmp.mapping.abort(),
     -- ['<Esc>'] = cmp.mapping.abort(),
 
-    ['<C-l>'] = cmp.mapping.confirm({behavior = cmp.ConfirmBehavior.Replace, select = true}),
-    ['<Right>'] = cmp.mapping.confirm({behavior = cmp.ConfirmBehavior.Replace, select = true}),
+    ['<C-l>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
+    ['<Right>'] = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true }),
     --['<CR>'] = cmp.mapping.confirm({select = true}),
     ['<CR>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         local entry = cmp.get_selected_entry()
         if entry then
-          cmp.confirm({behavior = cmp.ConfirmBehavior.Replace, select = true })
+          cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
         else
           cmp.abort()
         end
       else
         fallback()
       end
-    end, {'i', 's'}),
+    end, { 'i', 's' }),
     ['<C-]>'] = cmp.mapping(function(fallback)
       if luasnip.jumpable(1) then
         luasnip.jump(1)
       else
         fallback()
       end
-    end, {'i', 's'}),
+    end, { 'i', 's' }),
 
     ['<C-[>'] = cmp.mapping(function(fallback)
       if luasnip.jumpable(-1) then
@@ -166,7 +198,7 @@ cmp.setup({
       else
         fallback()
       end
-    end, {'i', 's'}),
+    end, { 'i', 's' }),
 
     ['<Tab>'] = cmp.mapping(function(fallback)
       local col = vim.fn.col('.') - 1
@@ -178,7 +210,7 @@ cmp.setup({
       else
         cmp.complete()
       end
-    end, {'i', 's'}),
+    end, { 'i', 's' }),
 
     ['<S-Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
@@ -186,7 +218,7 @@ cmp.setup({
       else
         fallback()
       end
-    end, {'i', 's'}),
+    end, { 'i', 's' }),
   },
 })
 
@@ -203,12 +235,12 @@ vim.diagnostic.config({
 
 vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(
   vim.lsp.handlers.hover,
-  {border = 'rounded'}
+  { border = 'rounded' }
 )
 
 vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
   vim.lsp.handlers.signature_help,
-  {border = 'rounded'}
+  { border = 'rounded' }
 )
 -- >>>
 

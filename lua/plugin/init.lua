@@ -38,8 +38,8 @@ function initPacker(compile)
   use 'hrsh7th/nvim-cmp'
   use 'saadparwaiz1/cmp_luasnip'
   use 'rebelot/kanagawa.nvim'
+  use { 'windwp/nvim-autopairs', config = function() require('nvim-autopairs').setup({}) end }
   -- >>>
-
   -- Sync and compile if required
   if packer_bootstrap then
     packer.sync()

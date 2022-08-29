@@ -16,6 +16,12 @@ autocmd('BufWritePre', {
   command = ":%s/\\s\\+$//e"
 })
 
+-- disable ftplugin formatoptions
+autocmd('BufEnter', {
+  pattern = '*',
+  command = 'setlocal formatoptions-=ro'
+})
+
 -- Settings for filetypes:
 -- Help window
 autocmd('FileType', {
